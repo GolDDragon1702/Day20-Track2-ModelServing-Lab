@@ -57,7 +57,7 @@ def run_one(bench: Path, model: str, threads: int, n_gpu_layers: int) -> float:
         str(bench), "-m", model,
         "-t", str(threads),
         "-ngl", str(n_gpu_layers),
-        "-p", "0", "-n", "64",
+        "-p", "0", "-n", "128",
         "-r", "2",
     ]
     print(f"   running: {' '.join(cmd[1:])}")
@@ -74,7 +74,7 @@ def main() -> int:
     model = load_active()
     hw = load_hw()
     backends = hw.get("gpu", {}).get("backends", {})
-    n_gpu = 99 if any(v for k, v in backends.items() if k != "cpu_only") else 0
+    n_gpu = 0
 
     grid = thread_grid(hw)
     print(f"==> thread sweep on {Path(model).name}")

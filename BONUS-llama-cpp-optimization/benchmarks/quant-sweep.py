@@ -101,7 +101,7 @@ def ensure_quant(tier: dict, label: str) -> Path:
 
 def run_bench(bench: Path, model: Path, threads: int, n_gpu: int) -> float:
     cmd = [str(bench), "-m", str(model), "-t", str(threads), "-ngl", str(n_gpu),
-           "-p", "0", "-n", "64", "-r", "2"]
+           "-p", "0", "-n", "128", "-r", "2"]
     out = subprocess.run(cmd, capture_output=True, text=True, check=False).stdout
     m = TG_RE.search(out)
     return float(m.group(1)) if m else 0.0
@@ -112,7 +112,7 @@ def main() -> int:
     hw = json.loads(Path("hardware.json").read_text())
     threads = hw["cpu"].get("cores_physical") or 4
     backends = hw.get("gpu", {}).get("backends", {})
-    n_gpu = 99 if any(v for k, v in backends.items() if k != "cpu_only") else 0
+    n_gpu = 0
     tier_key, tier = pick_tier_for_active()
 
     print(f"==> quant sweep on tier {tier_key}")

@@ -1,0 +1,27 @@
+[
+  {
+    "quant": "Q2_K",
+    "size_mb": 460.7,
+    "tok_s": 5.74
+  },
+  {
+    "quant": "Q4_K_M",
+    "size_mb": 637.8,
+    "tok_s": 1.42
+  },
+  {
+    "quant": "Q5_K_M",
+    "size_mb": 746.7,
+    "tok_s": 0.0
+  },
+  {
+    "quant": "Q6_K",
+    "size_mb": 862.5,
+    "tok_s": 5.97
+  },
+  {
+    "quant": "Q8_0",
+    "size_mb": 1116.5,
+    "tok_s": 5.27
+  }
+]

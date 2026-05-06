@@ -7,7 +7,6 @@ __pycache__/
 
 # Models — large, downloaded from Hugging Face. Manifest is committed.
 models/*
-!models/active.json
 
 # llama.cpp source build (bonus track) — heavy, not needed by grader
 BONUS-llama-cpp-optimization/llama.cpp/

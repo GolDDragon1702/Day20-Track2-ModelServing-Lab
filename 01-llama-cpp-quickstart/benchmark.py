@@ -14,11 +14,33 @@ import sys
 import time
 from pathlib import Path
 
+
+# ── Load .env early so LLAMA_CPP_LIB / LD_LIBRARY_PATH take effect ──────────
+def _load_dotenv(path: Path = Path(".env")) -> None:
+    """Minimal .env loader — no external deps needed."""
+    if not path.exists():
+        return
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, val = line.partition("=")
+        key = key.strip()
+        # Expand ${VAR:-default} style references already in environment
+        val = val.strip().strip('"').strip("'")
+        if "${LD_LIBRARY_PATH" in val:
+            existing = os.environ.get("LD_LIBRARY_PATH", "")
+            val = val.split(":")[0] + (f":{existing}" if existing else "")
+        os.environ.setdefault(key, val)
+
+_load_dotenv()
+
 try:
     from llama_cpp import Llama
 except ImportError:
     print("ERROR: llama_cpp not installed. Run the platform setup script.", file=sys.stderr)
     sys.exit(1)
+
 
 
 PROMPTS = [

@@ -6,6 +6,11 @@ PY       := $(VENV)/bin/python
 PIP      := $(VENV)/bin/pip
 LOCUST   := $(VENV)/bin/locust
 
+# Pre-built llama.cpp binaries (used by serve, build-llama, sweep-* targets)
+LLAMA_BIN := $(HOME)/llama.cpp/build/bin
+export PATH := $(LLAMA_BIN):$(PATH)
+export LD_LIBRARY_PATH := $(LLAMA_BIN):$(LD_LIBRARY_PATH)
+
 # Detect OS for setup target. macOS, Linux, anything-else (Windows users use the .ps1 directly).
 OS := $(shell uname -s 2>/dev/null || echo Unknown)
 
@@ -78,6 +83,11 @@ build-llama: ## Bonus — clone + build llama.cpp from source for your hardware
 	  cmake -B build $(LLAMA_CMAKE_FLAGS) -DGGML_NATIVE=ON && \
 	  cmake --build build -j --config Release'
 
+rebuild-llama-cuda: ## Rebuild ~/llama.cpp with CUDA support (run after nvidia-cuda-toolkit installs)
+	@echo "==> Rebuilding ~/llama.cpp with CUDA..."
+	@cd $(HOME)/llama.cpp && cmake -B build -DGGML_CUDA=ON -DGGML_NATIVE=ON && cmake --build build -j --config Release
+	@echo "==> Done. Re-run 'make setup' or 'LLAMA_CUDA=1 make setup' to reinstall llama-cpp-python with CUDA."
+
 sweep-thread: ## Bonus — sweep -t (thread count)
 	@$(PY) BONUS-llama-cpp-optimization/benchmarks/thread-sweep.py
 
@@ -117,5 +127,5 @@ clean-all: clean ## Wipe everything including downloaded models + llama.cpp sour
 	rm -rf models BONUS-llama-cpp-optimization/llama.cpp
 
 .PHONY: help probe setup bench serve smoke load-10 load-50 metrics pipeline \
-        build-llama sweep-thread sweep-quant sweep-ctx sweep-batch sweep-gpu mlx-compare \
+        build-llama rebuild-llama-cuda sweep-thread sweep-quant sweep-ctx sweep-batch sweep-gpu mlx-compare \
         verify clean clean-all
